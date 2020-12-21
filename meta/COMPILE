@@ -1,0 +1,22 @@
+
+# 依赖
+apt-get install autoconf automake libtool curl make g++ unzip
+
+# 编译
+./configure --prefix=/opt/protobuf --sysconfdir=/opt/protobuf/conf
+make
+make check
+
+# 安装
+make install
+ldconfig  # refresh shared library cache.
+
+# 运行
+pkg-config --cflags protobuf         # print compiler flags
+pkg-config --libs protobuf           # print linker flags
+pkg-config --cflags --libs protobuf  # print both
+
+Example:
+c++ my_program.cc my_proto.pb.cc `pkg-config --cflags --libs protobuf`
+
+
