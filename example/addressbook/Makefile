@@ -25,7 +25,7 @@ clean: clean_cpp
 	rmdir com 2>/dev/null || true
 
 clean_cpp:
-	rm -fv cpp/add_person_cpp cpp/list_people_cpp cpp/addressbook.pb.cc cpp/addressbook.pb.h
+	rm -fv cpp/add_person_cpp cpp/list_people_cpp cpp/*.data
 
 protoc_cpp: addressbook.proto
 	protoc $$PROTO_PATH --cpp_out=cpp addressbook.proto
@@ -39,7 +39,7 @@ list_people_cpp: cpp/list_people.cc protoc_cpp
 	c++ -std=c++11 cpp/list_people.cc cpp/addressbook.pb.cc -o cpp/list_people_cpp `pkg-config --cflags --libs protobuf`
 
 clean_java:
-	rm -rfv java/add_person_java java/list_people_java java/*.class java/com
+	rm -rfv java/add_person_java java/list_people_java java/*.data java/*.class java/com/example/tutorial/*.class
 
 protoc_java: addressbook.proto
 	protoc $$PROTO_PATH --java_out=java addressbook.proto
