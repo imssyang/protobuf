@@ -5,24 +5,17 @@
 all: cpp java python
 
 cpp:    add_person_cpp    list_people_cpp
-dart:   add_person_dart   list_people_dart
-go:     add_person_go     list_people_go
-gotest: add_person_gotest list_people_gotest
 java:   add_person_java   list_people_java
 python: add_person_python list_people_python
+go:     add_person_go     list_people_go
+gotest: add_person_gotest list_people_gotest
+dart:   add_person_dart   list_people_dart
 
-clean: clean_cpp
-	rm -f add_person_java list_people_java add_person_python list_people_python
-	rm -f javac_middleman AddPerson*.class ListPeople*.class com/example/tutorial/*.class
-	rm -f protoc_middleman addressbook_pb2.py com/example/tutorial/AddressBookProtos.java
-	rm -f *.pyc
+clean: clean_cpp clean_java clean_python
 	rm -f protoc_middleman_go tutorial/*.pb.go add_person_go list_people_go
 	rm -f protoc_middleman_dart dart_tutorial/*.pb*.dart
 	rmdir dart_tutorial 2>/dev/null || true
 	rmdir tutorial 2>/dev/null || true
-	rmdir com/example/tutorial 2>/dev/null || true
-	rmdir com/example 2>/dev/null || true
-	rmdir com 2>/dev/null || true
 
 clean_cpp:
 	rm -fv cpp/add_person_cpp cpp/list_people_cpp cpp/*.data
@@ -51,19 +44,35 @@ compile_java: java/AddPerson.java java/ListPeople.java protoc_java
 add_person_java: compile_java
 	@echo "Writing shortcut script add_person_java..."
 	@echo '#! /bin/sh' > java/add_person_java
-	@echo 'java -classpath .:$$CLASSPATH AddPerson "$$@"' >> java/add_person_java
+	@echo 'java -classpath .:$$CLASSPATH:/opt/protobuf/lib/protobuf-java-3.14.0.jar AddPerson "$$@"' >> java/add_person_java
 	@chmod +x java/add_person_java
 
 list_people_java: compile_java
 	@echo "Writing shortcut script list_people_java..."
 	@echo '#! /bin/sh' > java/list_people_java
-	@echo 'java -classpath .:$$CLASSPATH ListPeople "$$@"' >> java/list_people_java
+	@echo 'java -classpath .:$$CLASSPATH:/opt/protobuf/lib/protobuf-java-3.14.0.jar ListPeople "$$@"' >> java/list_people_java
 	@chmod +x java/list_people_java
 
+clean_python:
+	rm -rfv python/add_person_python python/list_people_python python/*.data python/__pycache__
 
-protoc_middleman: addressbook.proto
-	protoc $$PROTO_PATH --cpp_out=. --java_out=. --python_out=. addressbook.proto
-	@touch protoc_middleman
+protoc_python: addressbook.proto
+	protoc $$PROTO_PATH --python_out=python addressbook.proto
+
+add_person_python: python/add_person.py protoc_python
+	@echo "Writing shortcut script add_person_python..."
+	@echo '#! /bin/sh' > python/add_person_python
+	@echo 'PYTHONPATH=/opt/protobuf/lib/protobuf-3.14.0-py3.8.egg ./add_person.py "$$@"' >> python/add_person_python
+	@chmod +x python/add_person_python
+
+list_people_python: python/list_people.py protoc_python
+	@echo "Writing shortcut script list_people_python..."
+	@echo '#! /bin/sh' > python/list_people_python
+	@echo 'PYTHONPATH=/opt/protobuf/lib/protobuf-3.14.0-py3.8.egg ./list_people.py "$$@"' >> python/list_people_python
+	@chmod +x python/list_people_python
+
+
+
 
 protoc_middleman_go: addressbook.proto
 	mkdir -p tutorial # make directory for go package
@@ -91,16 +100,3 @@ list_people_go: list_people.go protoc_middleman_go
 
 list_people_gotest: list_people.go list_people_go
 	go test list_people.go list_people_test.go
-
-
-add_person_python: add_person.py protoc_middleman
-	@echo "Writing shortcut script add_person_python..."
-	@echo '#! /bin/sh' > add_person_python
-	@echo './add_person.py "$$@"' >> add_person_python
-	@chmod +x add_person_python
-
-list_people_python: list_people.py protoc_middleman
-	@echo "Writing shortcut script list_people_python..."
-	@echo '#! /bin/sh' > list_people_python
-	@echo './list_people.py "$$@"' >> list_people_python
-	@chmod +x list_people_python

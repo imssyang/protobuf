@@ -2,7 +2,8 @@
 # 依赖
 apt-get install autoconf automake libtool curl make g++ unzip
 
-# 编译
+# 编译C++
+cd protobuf-3.14.0
 ./configure --prefix=/opt/protobuf --sysconfdir=/opt/protobuf/conf
 make
 make check
@@ -18,5 +19,32 @@ pkg-config --cflags --libs protobuf  # print both
 
 Example:
 c++ my_program.cc my_proto.pb.cc `pkg-config --cflags --libs protobuf`
+
+# 编译Java (依赖c++编译后产生的src/protoc可执行程序)
+cd protobuf-3.14.0/java
+mvn package
+    java/lite/target/protobuf-javalite-3.14.0.jar
+    java/core/target/protobuf-java-3.14.0.jar
+    java/util/target/protobuf-java-util-3.14.0.jar
+
+# 编译Python
+python -V                    查看版本
+protoc --version             查看版本
+cd protobuf-3.14.0/python    进入源码目录
+python setup.py build        编译
+python setup.py test         测试
+python setup.py install      安装到$PYTHONHOME/lib/python3.8/site-packages (可选)
+python setup.py sdist        源码打包成tgz
+python setup.py bdist_egg    打包成egg
+python setup.py bdist_wheel  打包成wheel
+
+(调用c++实现以提高性能)
+export LD_LIBRARY_PATH=/opt/protobuf/lib
+python setup.py build --cpp_implementation
+python setup.py test --cpp_implementation
+python setup.py install --cpp_implementation
+python setup.py sdist --cpp_implementation
+python setup.py bdist_egg --cpp_implementation
+python setup.py bdist_wheel --cpp_implementation
 
 
