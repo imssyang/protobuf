@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export PROTOBUF_DISABLE_ENV=no
 export PROTOBUF_HOME=/opt/protobuf
 
 #if [[ -z $CLASSPATH ]]; then
