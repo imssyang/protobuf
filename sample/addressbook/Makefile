@@ -72,7 +72,7 @@ list_people_python: python/list_people.py protoc_python
 	@chmod +x python/list_people_python
 
 clean_go:
-	rm -rfv go/go.mod go/go.sum go/pb go/add_person_go go/list_people_go
+	rm -rfv go/go.mod go/go.sum go/add_person_go go/list_people_go
 
 protoc_go: addressbook.proto
 ifneq ($(shell test -e go/go.mod && echo -n yes),yes)
