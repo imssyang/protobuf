@@ -72,24 +72,26 @@ list_people_python: python/list_people.py protoc_python
 	@chmod +x python/list_people_python
 
 clean_go:
-	rm -f protoc_middleman_go tutorial/*.pb.go add_person_go list_people_go
-	rmdir tutorial 2>/dev/null || true
+	rm -rfv go/go.mod go/go.sum go/pb go/add_person_go go/list_people_go
 
 protoc_go: addressbook.proto
-	mkdir -p tutorial # make directory for go package
-	protoc $$PROTO_PATH --go_out=tutorial addressbook.proto
+ifneq ($(shell test -e go/go.mod && echo -n yes),yes)
+	cd go; go mod init example.com/protobuf/addressbook
+endif
+	cd go; https_proxy=http://127.0.0.1:8118 go install google.golang.org/protobuf/cmd/protoc-gen-go
+	protoc $$PROTO_PATH --go_out=go addressbook.proto
 
-add_person_go: add_person.go protoc_middleman_go
-	go build -o add_person_go add_person.go
+add_person_go: protoc_go
+	cd go; go build -o add_person_go add_person.go
 
-list_people_go: list_people.go protoc_middleman_go
-	go build -o list_people_go list_people.go
+add_person_gotest: add_person_go
+	cd go; go test add_person.go add_person_test.go
 
-add_person_gotest: add_person_test.go add_person_go
-	go test add_person.go add_person_test.go
+list_people_go: protoc_go
+	cd go; go build -o list_people_go list_people.go
 
-list_people_gotest: list_people.go list_people_go
-	go test list_people.go list_people_test.go
+list_people_gotest: list_people_go
+	cd go; go test list_people.go list_people_test.go
 
 protoc_middleman_dart: addressbook.proto
 	mkdir -p dart_tutorial # make directory for the dart package

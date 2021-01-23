@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/golang/protobuf/proto"
-	pb "github.com/protocolbuffers/protobuf/examples/tutorial"
+	pb "example.com/protobuf/addressbook/pb/addressbook"
 )
 
 func writePerson(w io.Writer, p *pb.Person) {

@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	pb "github.com/protocolbuffers/protobuf/examples/tutorial"
+	pb "example.com/protobuf/addressbook/pb/addressbook"
 )
 
 func promptForAddress(r io.Reader) (*pb.Person, error) {
