@@ -11,11 +11,7 @@ go:     add_person_go     list_people_go
 gotest: add_person_gotest list_people_gotest
 dart:   add_person_dart   list_people_dart
 
-clean: clean_cpp clean_java clean_python
-	rm -f protoc_middleman_go tutorial/*.pb.go add_person_go list_people_go
-	rm -f protoc_middleman_dart dart_tutorial/*.pb*.dart
-	rmdir dart_tutorial 2>/dev/null || true
-	rmdir tutorial 2>/dev/null || true
+clean: clean_cpp clean_java clean_python clean_go clean_dart
 
 clean_cpp:
 	rm -fv cpp/add_person_cpp cpp/list_people_cpp cpp/*.data
@@ -93,11 +89,12 @@ list_people_go: protoc_go
 list_people_gotest: list_people_go
 	cd go; go test list_people.go list_people_test.go
 
-protoc_middleman_dart: addressbook.proto
-	mkdir -p dart_tutorial # make directory for the dart package
-	protoc -I ../src/:. --dart_out=dart_tutorial addressbook.proto ../src/google/protobuf/timestamp.proto
+clean_dart:
+	rm -rfv dart/add_person_dart dart/list_people_dart
+
+protoc_dart: addressbook.proto
+	protoc -I ../src/:. --dart_out=dart addressbook.proto ../src/google/protobuf/timestamp.proto
 	pub get
-	@touch protoc_middleman_dart
 
 add_person_dart: add_person.dart protoc_middleman_dart
 
